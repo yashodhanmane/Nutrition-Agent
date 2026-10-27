@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriCare AI — Personalised Nutrition Assistant | IBM Granite</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="stylesheet" href="/static/css/plan.css" />
+  <meta name="description" content="AI-powered personalised nutrition planning using IBM Granite LLM" />
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">🥗</div>
+    <div>
+      <div class="header-title">NutriCare AI</div>
+      <div class="header-subtitle">Personalised Nutrition · Powered by IBM Granite</div>
+    </div>
+  </div>
+  <div class="header-badge">IBM watsonx.ai</div>
+</header>
+
+<!-- ── Loading overlay ────────────────────────────────────────────────────── -->
+<div id="loadingOverlay" class="loading-overlay" style="display:none;">
+  <div class="big-spinner"></div>
+  <p id="loadingMsg">Generating your nutrition plan…</p>
+  <small>IBM Granite is analysing your profile. This may take 20–40 seconds.</small>
+</div>
+
+<!-- ── Main Content ───────────────────────────────────────────────────────── -->
+<div class="main-container">
+
+  <!-- Hero strip -->
+  <div style="background:linear-gradient(135deg,#e8f5ee,#d1eddb);border-radius:12px;padding:1.4rem 2rem;margin-bottom:1.75rem;border:1.5px solid #b2dfca;">
+    <h1 style="font-size:1.3rem;color:#1a6b3c;margin-bottom:.35rem;">Welcome to NutriCare AI 👋</h1>
+    <p style="color:#3a6b50;font-size:.92rem;max-width:700px;">
+      Get a fully personalised, medically aware nutrition plan crafted by IBM Granite — an advanced large language model.
+      Fill in your profile for a detailed 7-day plan, or jump straight to the Q&amp;A assistant for nutrition queries.
+    </p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="tab-plan" role="tab" aria-selected="true">
+      📋 &nbsp;Nutrition Plan Generator
+    </button>
+    <button class="tab-btn" data-tab="tab-qa" role="tab" aria-selected="false">
+      💬 &nbsp;Ask NutriCare AI
+    </button>
+    <button class="tab-btn" data-tab="tab-about" role="tab" aria-selected="false">
+      ℹ️ &nbsp;About &amp; Ethics
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB 1 — Nutrition Plan Generator                                       -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div id="tab-plan" class="tab-panel active">
+
+    <div class="card">
+      <div class="card-header">
+        <span style="font-size:1.1rem;">📋</span>
+        <h2>Your Profile &amp; Nutrition Plan Generator</h2>
+      </div>
+      <div class="card-body">
+
+        <form id="planForm" novalidate>
+
+          <!-- Section: Personal Details -->
+          <p style="font-weight:700;color:#1a6b3c;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;margin-bottom:.85rem;">
+            👤 Personal Details
+          </p>
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label for="userName">Full Name *</label>
+              <input type="text" id="userName" name="name" placeholder="e.g. Priya Sharma" required maxlength="80" />
+            </div>
+
+            <div class="form-group">
+              <label for="userAge">Age (years) *</label>
+              <input type="number" id="userAge" name="age" placeholder="e.g. 35" min="1" max="120" required />
+            </div>
+
+            <div class="form-group">
+              <label for="userGender">Gender</label>
+              <select id="userGender" name="gender">
+                <option value="">Prefer not to say</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Non-binary">Non-binary</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="userCity">City</label>
+              <input type="text" id="userCity" name="city" placeholder="e.g. Mumbai" maxlength="80" />
+            </div>
+
+            <div class="form-group">
+              <label for="userCountry">Country</label>
+              <input type="text" id="userCountry" name="country" placeholder="e.g. India" maxlength="80" />
+            </div>
+
+            <div class="form-group">
+              <label for="dietPreference">Diet Preference</label>
+              <select id="dietPreference" name="diet_preference">
+                <option value="No specific preference">No specific preference</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Vegan">Vegan</option>
+                <option value="Non-vegetarian">Non-vegetarian</option>
+                <option value="Pescatarian">Pescatarian</option>
+                <option value="Lacto-vegetarian">Lacto-vegetarian</option>
+                <option value="Gluten-free">Gluten-free</option>
+                <option value="Keto">Keto</option>
+                <option value="Mediterranean">Mediterranean</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="activityLevel">Activity Level</label>
+              <select id="activityLevel" name="activity_level">
+                <option value="Sedentary">Sedentary (desk job, little exercise)</option>
+                <option value="Lightly Active">Lightly Active (1–3 days/week)</option>
+                <option value="Moderate" selected>Moderately Active (3–5 days/week)</option>
+                <option value="Very Active">Very Active (6–7 days/week)</option>
+                <option value="Athlete">Athlete (intense daily training)</option>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- Section: Goals -->
+          <p style="font-weight:700;color:#1a6b3c;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;margin:1.35rem 0 .6rem;">
+            🎯 Health Goals
+          </p>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="goals" value="Weight Loss" /> Weight Loss</label>
+            <label><input type="checkbox" name="goals" value="Weight Gain" /> Weight Gain</label>
+            <label><input type="checkbox" name="goals" value="Muscle Building" /> Muscle Building</label>
+            <label><input type="checkbox" name="goals" value="General Wellness" checked /> General Wellness</label>
+            <label><input type="checkbox" name="goals" value="Manage Blood Sugar" /> Manage Blood Sugar</label>
+            <label><input type="checkbox" name="goals" value="Heart Health" /> Heart Health</label>
+            <label><input type="checkbox" name="goals" value="Improve Energy" /> Improve Energy</label>
+            <label><input type="checkbox" name="goals" value="Boost Immunity" /> Boost Immunity</label>
+            <label><input type="checkbox" name="goals" value="Better Digestion" /> Better Digestion</label>
+            <label><input type="checkbox" name="goals" value="Bone Health" /> Bone Health</label>
+          </div>
+
+          <!-- Section: Medical History -->
+          <p style="font-weight:700;color:#1a6b3c;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;margin:1.35rem 0 .6rem;">
+            🏥 Medical History <span style="font-weight:400;color:#57606a;">(select all that apply)</span>
+          </p>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="medical" value="Type 2 Diabetes" /> Type 2 Diabetes</label>
+            <label><input type="checkbox" name="medical" value="Type 1 Diabetes" /> Type 1 Diabetes</label>
+            <label><input type="checkbox" name="medical" value="High Blood Pressure" /> High Blood Pressure</label>
+            <label><input type="checkbox" name="medical" value="High Cholesterol" /> High Cholesterol</label>
+            <label><input type="checkbox" name="medical" value="Heart Disease" /> Heart Disease</label>
+            <label><input type="checkbox" name="medical" value="Thyroid Disorder" /> Thyroid Disorder</label>
+            <label><input type="checkbox" name="medical" value="PCOS" /> PCOS</label>
+            <label><input type="checkbox" name="medical" value="Kidney Disease" /> Kidney Disease</label>
+            <label><input type="checkbox" name="medical" value="Liver Disease" /> Liver Disease</label>
+            <label><input type="checkbox" name="medical" value="Osteoporosis" /> Osteoporosis</label>
+            <label><input type="checkbox" name="medical" value="Anaemia" /> Anaemia</label>
+            <label><input type="checkbox" name="medical" value="IBS / Digestive Issues" /> IBS / Digestive Issues</label>
+            <label><input type="checkbox" name="medical" value="Lactose Intolerance" /> Lactose Intolerance</label>
+            <label><input type="checkbox" name="medical" value="None" checked /> None</label>
+          </div>
+
+          <!-- Section: Allergies -->
+          <p style="font-weight:700;color:#1a6b3c;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;margin:1.35rem 0 .6rem;">
+            🚫 Food Allergies / Intolerances
+          </p>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="allergies" value="Peanuts" /> Peanuts</label>
+            <label><input type="checkbox" name="allergies" value="Tree Nuts" /> Tree Nuts</label>
+            <label><input type="checkbox" name="allergies" value="Dairy" /> Dairy</label>
+            <label><input type="checkbox" name="allergies" value="Gluten / Wheat" /> Gluten / Wheat</label>
+            <label><input type="checkbox" name="allergies" value="Eggs" /> Eggs</label>
+            <label><input type="checkbox" name="allergies" value="Soy" /> Soy</label>
+            <label><input type="checkbox" name="allergies" value="Shellfish" /> Shellfish</label>
+            <label><input type="checkbox" name="allergies" value="Fish" /> Fish</label>
+            <label><input type="checkbox" name="allergies" value="None" checked /> None</label>
+          </div>
+
+          <!-- Error alert -->
+          <div id="planError" class="alert alert-danger" style="display:none;"></div>
+
+          <!-- Actions -->
+          <div class="btn-group">
+            <button type="submit" class="btn btn-primary">
+              🥗 &nbsp;Generate My Nutrition Plan
+            </button>
+            <button type="button" id="resetForm" class="btn btn-secondary">
+              🔄 &nbsp;Reset Form
+            </button>
+          </div>
+
+        </form><!-- /planForm -->
+      </div><!-- /card-body -->
+    </div><!-- /card -->
+
+    <!-- Result panel -->
+    <div id="planResult" class="result-panel">
+      <div class="card">
+        <div class="card-header" style="background:#e8f5ee;">
+          <span style="font-size:1.1rem;">✅</span>
+          <h2>Your Personalised Nutrition Plan</h2>
+        </div>
+        <div class="card-body">
+          <div id="planOutput"></div>
+          <div id="disclaimerOutput" class="disclaimer-box"></div>
+          <div class="btn-group">
+            <button id="goToChat" class="btn btn-primary">💬 &nbsp;Ask a Follow-up Question</button>
+            <button onclick="window.print()" class="btn btn-secondary">🖨️ &nbsp;Print / Save as PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-plan -->
+
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB 2 — Q&A Chat                                                       -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div id="tab-qa" class="tab-panel">
+
+    <div class="card">
+      <div class="card-header">
+        <span style="font-size:1.1rem;">💬</span>
+        <h2>Ask NutriCare AI — Nutrition Q&amp;A Assistant</h2>
+      </div>
+      <div class="card-body">
+
+        <p style="color:#57606a;font-size:.88rem;margin-bottom:1rem;">
+          Ask any nutrition-related question. If you already generated a plan, NutriCare AI will use your profile for context.
+        </p>
+
+        <!-- Suggested questions -->
+        <div style="margin-bottom:1rem;">
+          <p style="font-size:.78rem;font-weight:700;color:#57606a;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.5rem;">
+            💡 Suggested Questions
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:.45rem;">
+            <button class="suggested-q btn btn-secondary" style="font-size:.8rem;padding:.35rem .8rem;">
+              What foods help manage Type 2 Diabetes?
+            </button>
+            <button class="suggested-q btn btn-secondary" style="font-size:.8rem;padding:.35rem .8rem;">
+              How much protein do I need per day?
+            </button>
+            <button class="suggested-q btn btn-secondary" style="font-size:.8rem;padding:.35rem .8rem;">
+              Best vegetarian sources of iron?
+            </button>
+            <button class="suggested-q btn btn-secondary" style="font-size:.8rem;padding:.35rem .8rem;">
+              Can I eat rice if I have diabetes?
+            </button>
+            <button class="suggested-q btn btn-secondary" style="font-size:.8rem;padding:.35rem .8rem;">
+              What is the Mediterranean diet?
+            </button>
+            <button class="suggested-q btn btn-secondary" style="font-size:.8rem;padding:.35rem .8rem;">
+              How many calories should I eat to lose weight?
+            </button>
+            <button class="suggested-q btn btn-secondary" style="font-size:.8rem;padding:.35rem .8rem;">
+              Foods to avoid with high blood pressure?
+            </button>
+            <button class="suggested-q btn btn-secondary" style="font-size:.8rem;padding:.35rem .8rem;">
+              What are superfoods and do they work?
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat window -->
+        <div id="chatWindow" class="chat-window">
+          <div class="chat-msg system">
+            👋 Hello! I'm NutriCare AI. Ask me any nutrition question and I'll do my best to help!
+          </div>
+        </div>
+
+        <!-- Chat input -->
+        <form id="chatForm" class="chat-input-row" novalidate>
+          <input
+            type="text"
+            id="chatInput"
+            placeholder="Ask a nutrition question…"
+            autocomplete="off"
+            maxlength="1000"
+          />
+          <button type="submit" id="chatSend" class="btn btn-primary" style="white-space:nowrap;">
+            Send ➤
+          </button>
+        </form>
+
+        <p style="font-size:.75rem;color:#57606a;margin-top:.7rem;">
+          ⚕️ Responses are AI-generated for educational purposes only. Always consult a healthcare professional for medical decisions.
+        </p>
+
+      </div>
+    </div>
+
+  </div><!-- /tab-qa -->
+
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB 3 — About & Ethics                                                 -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div id="tab-about" class="tab-panel">
+
+    <div class="card">
+      <div class="card-header">
+        <span style="font-size:1.1rem;">ℹ️</span>
+        <h2>About NutriCare AI</h2>
+      </div>
+      <div class="card-body">
+
+        <!-- About section -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;margin-bottom:1.5rem;">
+
+          <div style="background:#f6f8fa;border-radius:10px;padding:1.1rem;border:1.5px solid #d0d7de;">
+            <h3 style="color:#1a6b3c;font-size:.95rem;margin-bottom:.5rem;">🤖 Powered by IBM Granite</h3>
+            <p style="font-size:.86rem;color:#3a3a3a;line-height:1.65;">
+              NutriCare AI leverages IBM Granite — an enterprise-grade large language model from IBM watsonx.ai —
+              to generate personalised, evidence-informed nutrition guidance. Granite is designed for safety,
+              reliability, and responsible AI.
+            </p>
+          </div>
+
+          <div style="background:#f6f8fa;border-radius:10px;padding:1.1rem;border:1.5px solid #d0d7de;">
+            <h3 style="color:#1a6b3c;font-size:.95rem;margin-bottom:.5rem;">🛡️ AI Ethics &amp; Guardrails</h3>
+            <p style="font-size:.86rem;color:#3a3a3a;line-height:1.65;">
+              Every request passes through multi-layer guardrails that block harmful content, extreme dietary advice,
+              and medically dangerous recommendations. Sensitive topics trigger enhanced caution warnings.
+              Output is filtered before it reaches you.
+            </p>
+          </div>
+
+          <div style="background:#f6f8fa;border-radius:10px;padding:1.1rem;border:1.5px solid #d0d7de;">
+            <h3 style="color:#1a6b3c;font-size:.95rem;margin-bottom:.5rem;">💚 HAM Principles</h3>
+            <p style="font-size:.86rem;color:#3a3a3a;line-height:1.65;">
+              NutriCare AI follows <strong>H</strong>elpful, <strong>A</strong>ccountable, and <strong>M</strong>indful (HAM)
+              communication principles — providing accurate, respectful, and culturally sensitive responses that
+              empower rather than replace professional care.
+            </p>
+          </div>
+
+          <div style="background:#f6f8fa;border-radius:10px;padding:1.1rem;border:1.5px solid #d0d7de;">
+            <h3 style="color:#1a6b3c;font-size:.95rem;margin-bottom:.5rem;">🌍 Cultural Sensitivity</h3>
+            <p style="font-size:.86rem;color:#3a3a3a;line-height:1.65;">
+              Nutrition plans are tailored to the user's location, cultural context, and dietary preferences —
+              recommending locally available foods and respecting religious and cultural dietary practices.
+            </p>
+          </div>
+
+          <div style="background:#f6f8fa;border-radius:10px;padding:1.1rem;border:1.5px solid #d0d7de;">
+            <h3 style="color:#1a6b3c;font-size:.95rem;margin-bottom:.5rem;">🔒 Privacy</h3>
+            <p style="font-size:.86rem;color:#3a3a3a;line-height:1.65;">
+              Your data is used only within the current session to generate your nutrition plan. No personal
+              information is stored or shared. Sensitive health information is treated with the utmost care.
+            </p>
+          </div>
+
+          <div style="background:#f6f8fa;border-radius:10px;padding:1.1rem;border:1.5px solid #d0d7de;">
+            <h3 style="color:#1a6b3c;font-size:.95rem;margin-bottom:.5rem;">📋 What NutriCare AI Can Do</h3>
+            <ul style="font-size:.86rem;color:#3a3a3a;line-height:1.65;padding-left:1.2rem;">
+              <li>Generate 7-day personalised meal plans</li>
+              <li>Provide macronutrient &amp; micronutrient guidance</li>
+              <li>Answer general nutrition questions</li>
+              <li>Consider medical conditions in recommendations</li>
+              <li>Suggest locally available, culturally appropriate foods</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Medical Disclaimer -->
+        <div style="background:#fff8e1;border:2px solid #ffe082;border-radius:10px;padding:1.25rem 1.5rem;">
+          <h3 style="color:#6d5302;font-size:1rem;margin-bottom:.6rem;">⚕️ Medical Disclaimer</h3>
+          <p style="font-size:.86rem;color:#6d5302;line-height:1.7;">
+            The information provided by NutriCare AI is for <strong>general educational purposes only</strong> and does NOT
+            constitute medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional
+            or registered dietitian before making significant dietary changes, especially if you have pre-existing
+            medical conditions such as diabetes, hypertension, kidney disease, or cardiovascular conditions.
+          </p>
+          <p style="font-size:.86rem;color:#6d5302;line-height:1.7;margin-top:.6rem;">
+            IBM and the developers of NutriCare AI are not liable for any health outcomes resulting from
+            the use of this information. In case of a medical emergency, contact your local emergency services immediately.
+          </p>
+        </div>
+
+        <!-- Tech stack -->
+        <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:#f6f8fa;border-radius:10px;border:1.5px solid #d0d7de;">
+          <h3 style="color:#1a6b3c;font-size:.95rem;margin-bottom:.6rem;">🔧 Technology Stack</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
+            <span style="background:#1a6b3c;color:white;padding:.25rem .7rem;border-radius:20px;font-size:.78rem;font-weight:600;">IBM Granite LLM</span>
+            <span style="background:#0f4c81;color:white;padding:.25rem .7rem;border-radius:20px;font-size:.78rem;font-weight:600;">IBM watsonx.ai</span>
+            <span style="background:#3776ab;color:white;padding:.25rem .7rem;border-radius:20px;font-size:.78rem;font-weight:600;">Python 3.x</span>
+            <span style="background:#000;color:white;padding:.25rem .7rem;border-radius:20px;font-size:.78rem;font-weight:600;">Flask</span>
+            <span style="background:#e76f00;color:white;padding:.25rem .7rem;border-radius:20px;font-size:.78rem;font-weight:600;">REST API</span>
+            <span style="background:#264de4;color:white;padding:.25rem .7rem;border-radius:20px;font-size:.78rem;font-weight:600;">HTML5 / CSS3</span>
+            <span style="background:#f7df1e;color:#333;padding:.25rem .7rem;border-radius:20px;font-size:.78rem;font-weight:600;">JavaScript ES6</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /tab-about -->
+
+</div><!-- /main-container -->
+
+<footer class="footer">
+  <p>NutriCare AI &nbsp;·&nbsp; Powered by IBM Granite on IBM watsonx.ai &nbsp;·&nbsp; For educational use only</p>
+  <p style="margin-top:.25rem;">⚕️ Always consult a healthcare professional for medical decisions.</p>
+</footer>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

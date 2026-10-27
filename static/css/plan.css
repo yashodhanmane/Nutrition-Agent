@@ -1,0 +1,16 @@
+/* ── Markdown-like formatting for plan output ───────────────────────────── */
+.plan-content h1, .plan-content h2, .plan-content h3 {
+  color: var(--primary);
+  margin-top: 1.1rem;
+  margin-bottom: .35rem;
+  font-weight: 700;
+}
+.plan-content h1 { font-size: 1.1rem; }
+.plan-content h2 { font-size: 1rem; border-bottom: 1px solid var(--border); padding-bottom: .25rem; }
+.plan-content h3 { font-size: .95rem; }
+.plan-content p  { margin-bottom: .6rem; }
+.plan-content ul, .plan-content ol { padding-left: 1.5rem; margin-bottom: .6rem; }
+.plan-content li { margin-bottom: .25rem; }
+.plan-content strong { color: #155c33; }
+.plan-content em { color: var(--muted); font-style: italic; }
+.plan-content hr { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
